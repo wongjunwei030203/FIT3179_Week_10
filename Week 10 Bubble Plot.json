@@ -1,0 +1,145 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 500,
+    "height": 400,
+    "title": "Relationship Between GDP Per Capita and Unemployment Rate",
+    "data": {
+      "url": "https://raw.githubusercontent.com/wongjunwei030203/FIT3179_Week_10/main/GDP_Unemployment.csv"
+    },
+    "transform": [
+      {"filter": "year_selection == null || datum.Year == year_selection"},
+      {"filter": "datum['Unemployment rate'] != 0"},
+      {"filter": "continent_selection == null || datum.Continent == continent_selection"}
+    ],
+    "params": [
+      {
+        "name": "year_selection",
+        "value": 2021,
+        "bind": {
+          "input": "select",
+          "options": [2019, 2020, 2021, 2022],
+          "name": "Year:"
+        }
+      },
+      {
+        "name": "continent_selection",
+        "value": null,
+        "bind": {
+          "input": "select",
+          "options": [
+            null,
+            "North America",
+            "South America",
+            "Europe",
+            "Africa",
+            "Asia",
+            "Oceania"
+          ],
+          "labels": [
+            "Show All",
+            "North America",
+            "South America",
+            "Europe",
+            "Africa",
+            "Asia",
+            "Oceania"
+          ],
+          "name": "Continent:"
+        }
+      }
+    ],
+    "encoding": {
+      "x": {
+        "field": "GDP per capita",
+        "type": "quantitative",
+        "title": "GDP Per Capita (in US$)",
+        "axis": {
+          "labelAngle": -45,
+          "tickCount": 7
+        },
+        "scale": {
+          "type": "pow",
+          "exponent": 0.5,
+          "domain": [0, 100000]
+        }
+      },
+      "y": {
+        "field": "Unemployment rate",
+        "type": "quantitative",
+        "title": "Unemployment rate"
+      }
+    },
+    "layer": [
+      {
+        "mark": "circle",
+        "encoding": {
+          "color": {
+            "field": "Continent",
+            "type": "nominal",
+            "scale": {
+              "domain": [
+                "North America",
+                "South America",
+                "Europe",
+                "Africa",
+                "Asia",
+                "Oceania"
+              ],
+              "range": [
+                "#e41a1c",
+                "#984ea3",
+                "#ff7f00",
+                "#a6cee3",
+                "#377eb8",
+                "#a65628"
+              ]
+            }
+          },
+          "opacity": {"value": 0.6},
+          "size": {
+            "field": "Population",
+            "type": "quantitative",
+            "scale": {
+              "type": "threshold",
+              "domain": [1000000, 10000000, 50000000, 100000000, 500000000],
+              "range": [10, 50, 150, 200, 300, 400]
+            },
+            "legend": {"format": ".1s"}
+          },
+          "tooltip": [
+            {"field": "Country", "type": "nominal"},
+            {"field": "Population", "type": "quantitative", "format": ","},
+            {"field": "GDP per capita", "type": "quantitative", "format": ",.2f", "title": "GDP per capita (US$)"},
+            {"field": "Unemployment rate", "type": "quantitative", "format": ".2f", "title": "Unemployment rate"}
+          ]
+        }
+      },
+      {
+        "mark": {
+          "type": "text",
+          "align": "right",
+          "baseline": "middle",
+          "dx": -12,
+          "fontSize": 11.5,
+          "fontStyle": "italic"
+        },
+        "encoding": {
+          "text": {"field": "Country", "type": "nominal"},
+          "color": {"value": "black"},
+          "opacity": {
+            "condition": {
+              "test": "datum['Country'] == 'China' || datum['Country'] == 'Singapore' || datum['Country'] == 'Australia' || datum['Country'] == 'New Zealand' || datum['Country'] == 'Italy' || datum['Country'] == 'India' || datum['Country'] == 'United States'",
+              "value": 1
+            },
+            "value": 0
+          },
+          "tooltip": [
+            {"field": "Country", "type": "nominal"},
+            {"field": "Population", "type": "quantitative", "format": ","},
+            {"field": "GDP per capita", "type": "quantitative", "format": ",.2f", "title": "GDP per capita (US$)"},
+            {"field": "Unemployment rate", "type": "quantitative", "format": ".2f", "title": "Unemployment rate"}
+          ]
+        }
+      }
+    ]
+  }
